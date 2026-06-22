@@ -34,7 +34,6 @@ export const createExpense = async (req, res) => {
       date,
       user: req.user._id,
     });
-    console.log(req.body);
 
     await newExpense.save();
     res.status(201).json(newExpense);
