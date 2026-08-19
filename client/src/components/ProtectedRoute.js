@@ -1,22 +1,17 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useUser } from "../UserContext";
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
+  const { session, loading } = useUser();
 
-  if (!token) return <Navigate to="/login" replace />;
+  // Gate on `session`, not `user`: a route should be reachable once
+  // authenticated even if the profile fetch is still in flight or
+  // failed - conflating "authenticated" with "profile loaded" would be
+  // wrong here.
+  if (loading) return null;
 
-  try {
-    const { exp } = jwtDecode(token);
-    if (Date.now() >= exp * 1000) {
-      localStorage.removeItem("token");
-      return <Navigate to="/login" replace />;
-    }
-  } catch {
-    localStorage.removeItem("token");
-    return <Navigate to="/login" replace />;
-  }
+  if (!session) return <Navigate to="/login" replace />;
 
   return children;
 };

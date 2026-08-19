@@ -2,24 +2,15 @@ import axios from 'axios';
 
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api', 
+  baseURL: 'http://localhost:5000/api',
 });
 
 export default API;
 
-export const fetchCurrentUser = async (token) => {
-  try {
-    const { data } = await API.get('/auth/me', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return data;
-  } catch (err) {
-    console.error('Failed to fetch user info:', err);
-    return null;
-  }
-};
+// Auth (register/login/me) is now handled directly via supabase-js
+// (see UserContext.jsx, LoginPage.jsx) - these Express endpoints are no
+// longer called by the client. Expense/goal functions below still go
+// through the old Express/Mongo backend until Phase 5.
 
 export const getExpenses = async (token) => {
   try {

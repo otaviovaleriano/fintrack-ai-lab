@@ -8,9 +8,7 @@ import {
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
 import logo from "../assets/FinTrack-logo.png";
-import API from "../api";
-import { fetchCurrentUser } from "../api";
-import { useUser } from '../UserContext';
+import { supabase } from "../supabaseClient";
 import { useNavigate } from 'react-router-dom';
 
 
@@ -23,6 +21,7 @@ const LoginPage = () => {
   const [isLogin, setIsLogin] = useState(true);
 
   const [formErrors, setFormErrors] = useState({});
+  const [infoMessage, setInfoMessage] = useState("");
 
     const navigate = useNavigate();
 
@@ -46,62 +45,60 @@ const LoginPage = () => {
     return errors;
   };
 
-  const { login } = useUser();
-
   const handleLogin = async () => {
     const errors = validateLogin();
     if (Object.keys(errors).length > 0) return setFormErrors(errors);
+    setFormErrors({});
+    setInfoMessage("");
 
-    try {
-      const { data } = await API.post("/auth/login", {
-        email: formData.email,
-        password: formData.password,
-      });
-      localStorage.setItem("token", data.token);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: formData.email,
+      password: formData.password,
+    });
 
-      const user = await fetchCurrentUser(data.token);
-      login(user);
-      navigate('/');
-      console.log("User data:", user);
-
-      // need to do: Save to context or redirect
-    } catch (err) {
-      console.error(err);
-      setFormErrors({ general: err.response?.data?.message || "Login failed" });
+    if (error) {
+      setFormErrors({ general: error.message });
+      return;
     }
+
+    // UserContext's onAuthStateChange listener picks up the new session
+    // on its own - no manual context update needed here.
+    navigate('/');
   };
 
   const handleSignup = async () => {
     const errors = validateSignup();
     if (Object.keys(errors).length > 0) return setFormErrors(errors);
+    setFormErrors({});
+    setInfoMessage("");
 
-    try {
-      const { data } = await API.post("/auth/register", {
-        name: formData.email.split("@")[0], // or use a dedicated name input later
-        email: formData.email,
-        password: formData.password,
-      });
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        // Preserves the app's existing behavior (name derived from the
+        // email prefix) - this metadata is what the Phase 2 signup
+        // trigger reads via coalesce() to create the matching profiles
+        // row.
+        data: { name: formData.email.split("@")[0] },
+      },
+    });
 
-      localStorage.setItem("token", data.token);
-
-      const user = await fetchCurrentUser(data.token);
-      login(user);
-      navigate('/');
-      console.log("User data:", user);
-
-      // TODO: Save to context or redirect
-    } catch (err) {
-      console.error(err);
-      setFormErrors({
-        general: err.response?.data?.message || "Signup failed",
-      });
+    if (error) {
+      setFormErrors({ general: error.message });
+      return;
     }
-    
-    
+
+    if (data.session) {
+      // Email confirmation is off for this project - signUp returned an
+      // active session immediately, same as the old flow.
+      navigate('/');
+    } else {
+      // Email confirmation is on - there is a pending user but no
+      // session yet. Not an error, so it isn't rendered as one.
+      setInfoMessage("Account created! Check your email to confirm it before logging in.");
+    }
   };
-
-
-
 
 
   return (
@@ -167,6 +164,12 @@ const LoginPage = () => {
               </p>
             )}
 
+            {infoMessage && (
+              <p className="text-green-600 text-sm text-center">
+                {infoMessage}
+              </p>
+            )}
+
             <Button
               className="w-full"
               onClick={isLogin ? handleLogin : handleSignup}
@@ -181,6 +184,7 @@ const LoginPage = () => {
                   <span
                     onClick={() => {
                       setFormErrors({});
+                      setInfoMessage("");
                       setIsLogin(false);
                     }}
                     className="text-blue-600 hover:underline cursor-pointer"
@@ -194,6 +198,7 @@ const LoginPage = () => {
                   <span
                     onClick={() => {
                       setFormErrors({});
+                      setInfoMessage("");
                       setIsLogin(true);
                     }}
                     className="text-blue-600 hover:underline cursor-pointer"
