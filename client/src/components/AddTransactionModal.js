@@ -47,23 +47,28 @@ const AddTransactionModal = ({ isOpen, onClose, onAdd, defaultData }) => {
       return;
     }
 
+    // Built explicitly from the editable fields only - `form` gets
+    // populated from the full expense row on edit (see the effect
+    // above), and Supabase's .update() writes whatever the payload
+    // contains rather than silently filtering it the way the old
+    // Express controller's destructuring did.
     const transaction = {
-      ...form,
+      type: form.type,
+      category: form.category,
+      description: form.description,
       amount: parseFloat(form.amount),
+      date: form.date,
     };
 
-    console.log("Transaction submitted:", transaction);
-
     try {
-      const token = localStorage.getItem("token");
-
       let saved;
-      if (defaultData && defaultData._id) {
+      if (defaultData && defaultData.id) {
         //editing
-        saved = await updateExpense(defaultData._id, transaction, token);
+        saved = await updateExpense(defaultData.id, transaction);
       } else {
-        // adding new
-        saved = await addExpense(transaction, token);
+        // adding new - ownership (user_id) is attached inside
+        // addExpense itself, not passed in here alongside form data.
+        saved = await addExpense(transaction);
       }
 
       onAdd(saved);

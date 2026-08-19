@@ -43,12 +43,15 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const txData = await getExpenses(token);
-        const withId = txData.map((t) => ({ ...t, id: t._id }));
-        setTransactions(withId);
+        const txData = await getExpenses();
+        setTransactions(txData);
 
-        const goalData = await fetchSavingsGoal(token);
+        // Savings Goal still goes through the old Express/Mongo path
+        // (Phase 6, deferred) - it has no real auth of its own anymore
+        // now that the client-side JWT is gone, so this call is
+        // intentionally left broken rather than propped up with a dead
+        // localStorage token read.
+        const goalData = await fetchSavingsGoal();
         setGoal(goalData);
       } catch (err) {
         console.error("Failed to fetch dashboard data:", err);

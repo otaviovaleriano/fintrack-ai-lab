@@ -37,13 +37,8 @@ const Expenses = () => {
 
   const fetchExpenses = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const data = await getExpenses(token);
-      const withId = data.map((exp) => ({
-        ...exp,
-        id: exp._id,
-      }));
-      setTransactions(withId);
+      const data = await getExpenses();
+      setTransactions(data);
     } catch (err) {
       console.error("Failed to fetch expenses:", err);
     }
@@ -65,19 +60,14 @@ const Expenses = () => {
   }, [startDate, endDate]);
 
   const handleAddOrUpdateTransaction = (savedTx) => {
-    const newTx = {
-      ...savedTx,
-      id: savedTx._id,
-    };
-
     setTransactions((prev) => {
-      const index = prev.findIndex((tx) => tx._id === newTx._id);
+      const index = prev.findIndex((tx) => tx.id === savedTx.id);
       if (index !== -1) {
         const updated = [...prev];
-        updated[index] = newTx;
+        updated[index] = savedTx;
         return updated.sort((a, b) => new Date(b.date) - new Date(a.date));
       } else {
-        return [newTx, ...prev].sort(
+        return [savedTx, ...prev].sort(
           (a, b) => new Date(b.date) - new Date(a.date)
         );
       }
@@ -89,8 +79,11 @@ const Expenses = () => {
   useEffect(() => {
     const fetchGoal = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const goalData = await fetchSavingsGoal(token);
+        // Savings Goal is still on the old Express/Mongo path (Phase 6,
+        // deferred) and has no working auth of its own now - left
+        // intentionally broken rather than propped up with a dead
+        // localStorage token read.
+        const goalData = await fetchSavingsGoal();
         setGoal(goalData);
       } catch (err) {
         console.error("Failed to load goal:", err);
@@ -110,8 +103,7 @@ const Expenses = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this transaction?")) {
       try {
-        const token = localStorage.getItem("token");
-        await deleteExpense(id, token);
+        await deleteExpense(id);
         setTransactions((prev) => prev.filter((tx) => tx.id !== id));
       } catch (err) {
         console.error("Failed to delete:", err);
@@ -134,8 +126,7 @@ const Expenses = () => {
   const handleGoalClear = async () => {
     if (window.confirm("Are you sure you want to clear your savings goal?")) {
       try {
-        const token = localStorage.getItem("token");
-        await clearGoalAPI(token);
+        await clearGoalAPI();
         setGoal(null);
       } catch (err) {
         console.error("Error clearing goal:", err);
@@ -217,8 +208,7 @@ const Expenses = () => {
         onClose={() => setIsGoalModalOpen(false)}
         onSave={async (newGoal) => {
           try {
-            const token = localStorage.getItem("token");
-            const saved = await saveSavingsGoal(newGoal, token);
+            const saved = await saveSavingsGoal(newGoal);
             setGoal(saved);
           } catch (err) {
             console.error("Error saving goal:", err);
