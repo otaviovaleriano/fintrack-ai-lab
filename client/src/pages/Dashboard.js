@@ -46,11 +46,7 @@ const Dashboard = () => {
         const txData = await getExpenses();
         setTransactions(txData);
 
-        // Savings Goal still goes through the old Express/Mongo path
-        // (Phase 6, deferred) - it has no real auth of its own anymore
-        // now that the client-side JWT is gone, so this call is
-        // intentionally left broken rather than propped up with a dead
-        // localStorage token read.
+        // Savings Goal now goes through Supabase directly too (Phase 6).
         const goalData = await fetchSavingsGoal();
         setGoal(goalData);
       } catch (err) {

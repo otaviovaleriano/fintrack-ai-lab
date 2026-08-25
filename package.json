@@ -4,8 +4,7 @@
   "description": "FinTrack is a personal budgeting and wallet web application.",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "node server/app.js",
+    "dev": "npm run client",
     "client": "npm start --prefix client",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,16 +22,9 @@
   "homepage": "https://github.com/otaviovaleriano/FinTrack#readme",
   "dependencies": {
     "@radix-ui/react-tooltip": "^1.2.7",
-    "bcryptjs": "^3.0.2",
-    "concurrently": "^9.1.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
-    "jwt-decode": "^4.0.0",
-    "mongoose": "^8.15.2"
+    "jwt-decode": "^4.0.0"
   },
   "devDependencies": {
     "@supabase/supabase-js": "^2.112.3",
