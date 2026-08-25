@@ -79,10 +79,7 @@ const Expenses = () => {
   useEffect(() => {
     const fetchGoal = async () => {
       try {
-        // Savings Goal is still on the old Express/Mongo path (Phase 6,
-        // deferred) and has no working auth of its own now - left
-        // intentionally broken rather than propped up with a dead
-        // localStorage token read.
+        // Savings Goal now goes through Supabase directly too (Phase 6).
         const goalData = await fetchSavingsGoal();
         setGoal(goalData);
       } catch (err) {
