@@ -91,7 +91,7 @@ const LoginPage = () => {
 
     if (data.session) {
       // Email confirmation is off for this project - signUp returned an
-      // active session immediately, same as the old flow.
+      // active session immediately.
       navigate('/');
     } else {
       // Email confirmation is on - there is a pending user but no

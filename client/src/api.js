@@ -1,11 +1,5 @@
 import { supabase } from './supabaseClient';
 
-// Auth (register/login/me), expenses, and savings goals all now go
-// directly through Supabase. Nothing in the client imports axios or an
-// `API` instance anymore - confirmed via grep before removing it here -
-// so the Express-backed HTTP client that used to live in this file is
-// gone rather than left as unused dead code.
-
 export const getExpenses = async () => {
   const { data, error } = await supabase
     .from('expenses')
@@ -52,10 +46,9 @@ export const updateExpense = async (id, updatedTx) => {
 };
 
 // public.savings_goals uses snake_case columns (start_date/end_date),
-// but the UI (SavingsGoalCard.jsx, SetGoalModal.jsx) already expects
-// camelCase (startDate/endDate), matching the old Mongoose shape. api.js
-// is the seam that translates between the two, so nothing else in the
-// app needs to change.
+// but the UI (SavingsGoalCard.jsx, SetGoalModal.jsx) expects camelCase
+// (startDate/endDate). api.js is the seam that translates between the
+// two, so nothing else in the app needs to change.
 const toClientGoal = (row) =>
   row && {
     amount: row.amount,
@@ -76,11 +69,10 @@ export const fetchSavingsGoal = async () => {
 };
 
 export const saveSavingsGoal = async (goal) => {
-  // A savings goal is one-per-user (savings_goals.user_id is unique),
-  // matching the old Mongo controller's findOneAndUpdate(..., {upsert:
-  // true}) - a plain insert() would fail with a duplicate-key error the
-  // second time a user sets a goal. upsert() with onConflict: 'user_id'
-  // replicates "create if absent, otherwise update" in one call.
+  // A savings goal is one-per-user (savings_goals.user_id is unique) -
+  // a plain insert() would fail with a duplicate-key error the second
+  // time a user sets a goal. upsert() with onConflict: 'user_id' gives
+  // "create if absent, otherwise update" in one call.
   const {
     data: { session },
   } = await supabase.auth.getSession();

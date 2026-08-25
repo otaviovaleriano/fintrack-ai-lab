@@ -45,7 +45,7 @@ This document uses Supabase's current key terminology: **publishable key** (`sb_
 
 | | React → Supabase directly | React → Express → Supabase | Hybrid (hold pattern 1 as default; add pattern 2/3 only when needed) |
 |---|---|---|---|
-| Security | RLS is the sole enforcement layer, exhaustively tested (Phases 3, 5, 6) | Re-introduces custom-authorization risk unless carefully built as pattern 2 | RLS stays authoritative; a small, deliberately-scoped trusted surface exists only for genuine pattern-3 needs |
+| Security | Authorization is enforced at the database layer via explicit table privileges and RLS, with RLS providing per-user row isolation; exhaustively tested (Phases 3, 5, 6) | Re-introduces custom-authorization risk unless carefully built as pattern 2 | Table privileges + RLS stay authoritative; a small, deliberately-scoped trusted surface exists only for genuine pattern-3 needs |
 | Complexity | Lowest | Higher — second codebase, API contract | Grows only with actual privileged surface, not preemptively |
 | Deploy/maintenance cost | Lowest — no server process | Real ongoing hosting/patching/monitoring cost | Scales with need — could be near-zero (a couple of Edge Functions) |
 | Becomes necessary when | N/A | Every operation needs custom logic RLS can't express | The moment a genuine pattern-3 operation appears |

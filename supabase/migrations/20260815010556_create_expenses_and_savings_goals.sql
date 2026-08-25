@@ -22,8 +22,8 @@ create table public.savings_goals (
   updated_at timestamptz not null default now()
 );
 
--- Replicates Mongoose's automatic updatedAt maintenance, which Postgres
--- does not do by default.
+-- Postgres has no built-in equivalent to an ORM's automatic updatedAt
+-- maintenance, so this trigger provides it explicitly.
 create function public.set_updated_at()
 returns trigger
 language plpgsql

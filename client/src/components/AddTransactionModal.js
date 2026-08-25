@@ -50,8 +50,7 @@ const AddTransactionModal = ({ isOpen, onClose, onAdd, defaultData }) => {
     // Built explicitly from the editable fields only - `form` gets
     // populated from the full expense row on edit (see the effect
     // above), and Supabase's .update() writes whatever the payload
-    // contains rather than silently filtering it the way the old
-    // Express controller's destructuring did.
+    // contains, so it must not include id/user_id/timestamps.
     const transaction = {
       type: form.type,
       category: form.category,
