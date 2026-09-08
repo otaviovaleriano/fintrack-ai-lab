@@ -2,7 +2,6 @@ import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer
 } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 
 const COLORS = ["#10b981", "#6366f1"];

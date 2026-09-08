@@ -12,24 +12,12 @@ import IncomeSourceChart from "../components/dashboard/IncomeSourceChart";
 import { getExpenses, fetchSavingsGoal } from "../api";
 import { useUser } from "../UserContext";
 import { Button } from "../components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../components/ui/dropdown-menu";
 import { Info } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "../components/ui/tooltip";
 
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 
 const Dashboard = () => {

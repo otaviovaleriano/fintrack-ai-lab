@@ -1,7 +1,5 @@
 import * as React from "react";
 
-const TooltipContext = React.createContext();
-
 export function Tooltip({ children }) {
   return <div className="relative">{children}</div>;
 }

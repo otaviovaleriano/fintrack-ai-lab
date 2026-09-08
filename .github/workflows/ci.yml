@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  root-install-check:
+    name: Root dependency install (lockfile integrity)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install root dependencies from lockfile
+        run: npm ci
+
+  client:
+    name: Client build & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - name: Install client dependencies from lockfile
+        working-directory: client
+        run: npm ci
+      - name: Build
+        working-directory: client
+        run: npm run build
+      - name: Test
+        working-directory: client
+        # CI=true is already set by GitHub Actions, which makes
+        # react-scripts run tests once and exit instead of watch mode -
+        # --watchAll=false makes that explicit rather than relying on
+        # it implicitly.
+        run: npm test -- --watchAll=false

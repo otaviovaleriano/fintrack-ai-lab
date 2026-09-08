@@ -11,8 +11,10 @@ export const CardHeader = ({ className, ...props }) => (
 );
 CardHeader.displayName = "CardHeader";
 
-export const CardTitle = ({ className, ...props }) => (
-  <h3 className={cn("text-lg font-semibold leading-none tracking-tight", className)} {...props} />
+export const CardTitle = ({ className, children, ...props }) => (
+  <h3 className={cn("text-lg font-semibold leading-none tracking-tight", className)} {...props}>
+    {children}
+  </h3>
 );
 CardTitle.displayName = "CardTitle";
 

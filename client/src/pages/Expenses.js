@@ -19,7 +19,6 @@ import "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { Button } from "../components/ui/button";
-import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 
 const Expenses = () => {
