@@ -2,7 +2,6 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer
 } from "recharts";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
-import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 
 

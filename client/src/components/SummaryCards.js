@@ -1,7 +1,6 @@
 import React from "react";
 import SavingsGoalCard from "./SavingsGoalCard";
 import { DollarSign, TrendingDown } from "lucide-react";
-import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 
 const SummaryCards = ({
