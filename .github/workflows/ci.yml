@@ -39,3 +39,30 @@ jobs:
         # --watchAll=false makes that explicit rather than relying on
         # it implicitly.
         run: npm test -- --watchAll=false
+
+  calendar-date-timezone-regression:
+    name: Calendar-date regression (${{ matrix.timezone }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Jest's jsdom environment resolves the timezone once when the
+        # environment is created; TZ must be set before the process
+        # starts (a job-level env, not a mid-test mutation) to actually
+        # exercise this. One behind UTC, one ahead - the two directions
+        # of the bug this test guards against.
+        timezone: [America/Denver, Pacific/Auckland]
+    env:
+      TZ: ${{ matrix.timezone }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - name: Install client dependencies from lockfile
+        working-directory: client
+        run: npm ci
+      - name: Run calendarDate.test.js under ${{ matrix.timezone }}
+        working-directory: client
+        run: npx react-scripts test src/lib/calendarDate.test.js --watchAll=false
