@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useTranslation } from "react-i18next";
+import { parseCalendarDate, formatCalendarDate } from "../lib/calendarDate";
 
 const SetGoalModal = ({ isOpen, onClose, onSave, initialGoal }) => {
   const { t } = useTranslation();
@@ -12,8 +13,8 @@ const SetGoalModal = ({ isOpen, onClose, onSave, initialGoal }) => {
   useEffect(() => {
     if (initialGoal) {
       setAmount(initialGoal.amount);
-      setStartDate(new Date(initialGoal.startDate));
-      setEndDate(new Date(initialGoal.endDate));
+      setStartDate(parseCalendarDate(initialGoal.startDate));
+      setEndDate(parseCalendarDate(initialGoal.endDate));
     } else {
       setAmount("");
       setStartDate(null);
@@ -29,8 +30,8 @@ const SetGoalModal = ({ isOpen, onClose, onSave, initialGoal }) => {
     }
     onSave({
       amount: parseFloat(amount),
-      startDate: startDate.toISOString().split("T")[0],
-      endDate: endDate.toISOString().split("T")[0],
+      startDate: formatCalendarDate(startDate),
+      endDate: formatCalendarDate(endDate),
     });
     onClose();
   };
