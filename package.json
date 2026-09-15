@@ -20,12 +20,6 @@
     "url": "https://github.com/otaviovaleriano/FinTrack/issues"
   },
   "homepage": "https://github.com/otaviovaleriano/FinTrack#readme",
-  "dependencies": {
-    "@radix-ui/react-tooltip": "^1.2.7",
-    "jspdf": "^3.0.1",
-    "jspdf-autotable": "^5.0.2",
-    "jwt-decode": "^4.0.0"
-  },
   "devDependencies": {
     "@supabase/supabase-js": "^2.112.3",
     "supabase": "^2.114.0"
